@@ -20,10 +20,10 @@ ffft library is provided under its own terms -- see ffft.S for specifics.
 
 // IMPORTANT: FFT_N should be #defined as 128 in ffft.h.
 
-#include <avr/pgmspace.h>
+//#include <avr/pgmspace.h>
 #include <ffft.h>
-#include <math.h>
-#include <Wire.h>
+//#include <math.h>
+//#include <Wire.h>
 
 // Microphone connects to Analog Pin 0.  Corresponding ADC channel number
 // varies among boards...it's ADC0 on Uno and Mega, ADC7 on Leonardo.
@@ -66,7 +66,7 @@ void loop() {
 
   Serial.println("Buffer dump:");
   for(int i=0;i<=128;i++){
-    Serial.println(sample[i]);
+    Serial.println(capture[i]);
   }
 
 }
@@ -76,9 +76,7 @@ ISR(ADC_vect) { // Audio-sampling interrupt
   int16_t              sample         = ADC; // 0-1023
 
   capture[samplePos] =
-    ((sample > (512-noiseThreshold)) &&
-     (sample < (512+noiseThreshold))) ? 0 :
-    sample - 512; // Sign-convert for FFT; -512 to +511
+    (sample);
 
   if(++samplePos >= FFT_N) ADCSRA &= ~_BV(ADIE); // Buffer full, interrupt off
 }
